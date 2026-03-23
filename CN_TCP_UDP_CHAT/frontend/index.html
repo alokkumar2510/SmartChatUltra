@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SmartChat X Ultra — Decentralized AI Communication</title>
+<meta name="description" content="Decentralized AI-Powered Communication System with WebRTC P2P, Blockchain logging, and Network Intelligence."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div class="corner tl"></div><div class="corner tr"></div>
+<div class="corner bl"></div><div class="corner br"></div>
+
+<div id="app">
+  <!-- HUD HEADER -->
+  <header>
+    <div class="logo-wrap">
+      <div class="logo-main">SmartChat X <span class="ultra-badge">ULTRA</span></div>
+      <div class="logo-sub">[ TCP / UDP / WebRTC · AI · BLOCKCHAIN · ENCRYPTED · v4.0 ]</div>
+    </div>
+    <div class="hud-right">
+      <div class="stat-chip" id="net-quality-chip" title="Network Quality">
+        <span>NET</span><span id="net-quality-val">100%</span>
+      </div>
+      <div class="stat-chip" id="chain-chip" title="Blockchain">
+        <span>⛓️</span><span id="chain-length">1</span>
+      </div>
+      <div class="stat-chip offline" id="status-chip">
+        <div class="dot"></div>
+        <span id="status-text">OFFLINE</span>
+      </div>
+      <div class="time-hud" id="clock">00:00:00</div>
+    </div>
+  </header>
+
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen">
+    <div class="login-hero">
+      <div class="hero-title">SMARTCHAT X <span class="hero-ultra">ULTRA</span></div>
+      <div class="hero-sub">[ Decentralized AI-Powered Communication ]</div>
+    </div>
+    <div class="login-card">
+      <div class="card-label">// sys.auth</div>
+      <div class="card-title">IDENTIFY OPERATOR</div>
+      <div class="field-wrap">
+        <label>CALLSIGN / USERNAME</label>
+        <input type="text" id="username-input" placeholder="enter_username" maxlength="24" autocomplete="off" spellcheck="false"/>
+      </div>
+      <button class="btn-connect" id="join-btn" onclick="joinChat()">
+        <span>[ ESTABLISH CONNECTION ]</span>
+      </button>
+    </div>
+    <div class="login-features">
+      <div class="feat-item"><span class="feat-icon">🧠</span>AI Engine</div>
+      <div class="feat-item"><span class="feat-icon">🔐</span>Hybrid Encryption</div>
+      <div class="feat-item"><span class="feat-icon">🌐</span>Adaptive Routing</div>
+      <div class="feat-item"><span class="feat-icon">📞</span>WebRTC P2P</div>
+      <div class="feat-item"><span class="feat-icon">⛓️</span>Blockchain</div>
+      <div class="feat-item"><span class="feat-icon">📊</span>Live Dashboard</div>
+      <div class="feat-item"><span class="feat-icon">🎮</span>Gamified</div>
+      <div class="feat-item"><span class="feat-icon">🧪</span>Net Simulator</div>
+    </div>
+    <div class="login-hint">
+      <code>python run_all.py</code> → <code>ws://localhost:8765</code>
+    </div>
+  </div>
+
+  <!-- MAIN CHAT SCREEN -->
+  <div id="chat-screen">
+    <div class="tab-bar" id="tab-bar">
+      <button class="tab active" data-tab="chat" onclick="switchTab('chat')">💬 CHAT</button>
+      <button class="tab" data-tab="dashboard" onclick="switchTab('dashboard')">📊 DASHBOARD</button>
+      <button class="tab" data-tab="blockchain" onclick="switchTab('blockchain')">⛓️ BLOCKCHAIN</button>
+      <button class="tab" data-tab="network" onclick="switchTab('network')">🧪 NETWORK</button>
+      <button class="tab" data-tab="cluster" onclick="switchTab('cluster')">🌍 CLUSTER</button>
+      <button class="tab" data-tab="webrtc" onclick="switchTab('webrtc')">📞 P2P</button>
+      <button class="tab" data-tab="game" onclick="switchTab('game')">🎮 PROFILE</button>
+    </div>
+
+    <div class="chat-body">
+      <!-- CHAT TAB -->
+      <div class="tab-content active" id="tab-chat">
+        <div class="sidebar">
+          <div class="sidebar-hdr"><span>OPERATORS</span><span class="user-count" id="user-count">0</span></div>
+          <ul id="online-list"></ul>
+          <div class="sidebar-section">
+            <div class="sidebar-hdr"><span>PLUGINS</span></div>
+            <div class="plugin-list" id="plugin-list"></div>
+          </div>
+          <div class="sidebar-footer">
+            <div class="port-row"><span>TCP</span><span class="port-val">:9000</span></div>
+            <div class="port-row"><span>UDP</span><span class="port-val">:9001</span></div>
+            <div class="port-row"><span>WSS</span><span class="port-val">:8765</span></div>
+            <div class="port-row"><span>P2P</span><span class="port-val">WebRTC</span></div>
+          </div>
+        </div>
+        <div class="messages-wrap">
+          <div class="channel-hdr">
+            <span class="channel-name"><span class="channel-hash">#</span>MAIN_CHANNEL</span>
+            <div class="channel-sep"></div>
+            <span class="channel-desc">SmartChat X Ultra — Live</span>
+            <div class="channel-proto">
+              <span class="proto-tag tcp">TCP <span id="tcp-count">0</span></span>
+              <span class="proto-tag udp">UDP <span id="udp-count">0</span></span>
+              <span class="proto-tag p2p">P2P <span id="p2p-count">0</span></span>
+            </div>
+          </div>
+          <div id="messages"></div>
+          <div id="typing-bar"></div>
+          <div id="smart-replies" class="smart-replies-bar"></div>
+          <div class="input-bar">
+            <input type="text" id="msg-input" placeholder="transmit message... (/study topic for AI tutor)" autocomplete="off" spellcheck="false"/>
+            <button class="send-btn" onclick="sendMessage()" title="Send">
+              <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+            </button>
+            <button class="quit-btn" onclick="leaveChat()">EXIT</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DASHBOARD TAB w/ CHARTS -->
+      <div class="tab-content" id="tab-dashboard">
+        <div class="dashboard-grid">
+          <div class="dash-card" id="dash-proto-chart">
+            <div class="dash-title">🛤️ Protocol Distribution</div>
+            <div class="dash-body chart-wrap"><canvas id="chart-protocol"></canvas></div>
+          </div>
+          <div class="dash-card" id="dash-latency-chart">
+            <div class="dash-title">📈 Message Timeline</div>
+            <div class="dash-body chart-wrap"><canvas id="chart-timeline"></canvas></div>
+          </div>
+          <div class="dash-card" id="dash-ai">
+            <div class="dash-title">🧠 AI Engine</div>
+            <div class="dash-body">
+              <div class="dash-stat">Processed: <span id="ai-processed">0</span></div>
+              <div class="dash-stat">Blocked: <span id="ai-blocked">0</span></div>
+              <div class="dash-stat">Block Rate: <span id="ai-block-rate">0%</span></div>
+            </div>
+          </div>
+          <div class="dash-card" id="dash-encryption">
+            <div class="dash-title">🔐 Encryption</div>
+            <div class="dash-body">
+              <div class="dash-stat">Sessions: <span id="enc-sessions">0</span></div>
+              <div class="dash-stat">Encrypted: <span id="enc-count">0</span></div>
+              <div class="dash-stat">Algorithm: <span id="enc-algo">AES-256</span></div>
+            </div>
+          </div>
+          <div class="dash-card" id="dash-queue">
+            <div class="dash-title">📡 Message Queue</div>
+            <div class="dash-body">
+              <div class="dash-stat">Queued: <span id="q-total">0</span></div>
+              <div class="dash-stat">Delivered: <span id="q-delivered">0</span></div>
+              <div class="dash-stat">Pending: <span id="q-pending">0</span></div>
+            </div>
+          </div>
+          <div class="dash-card" id="dash-analytics">
+            <div class="dash-title">📈 Analytics</div>
+            <div class="dash-body">
+              <div class="dash-stat">Messages: <span id="an-total">0</span></div>
+              <div class="dash-stat">Users: <span id="an-users">0</span></div>
+              <div class="dash-stat">Avg Length: <span id="an-avg-len">0</span></div>
+            </div>
+          </div>
+          <div class="dash-card wide" id="dash-routing-log">
+            <div class="dash-title">🛤️ Recent Routing Decisions</div>
+            <div class="dash-body" id="routing-log-body"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOCKCHAIN TAB -->
+      <div class="tab-content" id="tab-blockchain">
+        <div class="blockchain-panel">
+          <div class="bc-header">
+            <h2 class="panel-title">⛓️ Blockchain Message Ledger</h2>
+            <div class="bc-controls">
+              <button class="btn-neon" onclick="validateChain()">✅ Validate Chain</button>
+              <button class="btn-neon red" onclick="tamperDemo()">⚠️ Tamper Demo</button>
+              <button class="btn-neon" onclick="refreshBlockchain()">🔄 Refresh</button>
+            </div>
+          </div>
+          <div id="bc-validation" class="bc-validation"></div>
+          <div class="bc-stats" id="bc-stats"></div>
+          <div class="bc-chain" id="bc-chain"></div>
+        </div>
+      </div>
+
+      <!-- NETWORK TAB -->
+      <div class="tab-content" id="tab-network">
+        <div class="network-panel">
+          <div class="net-header">
+            <h2 class="panel-title">🧪 Network Condition Simulator</h2>
+            <div class="net-quality" id="net-quality-display">Quality: <span id="nq-score">100</span>%</div>
+          </div>
+          <div class="net-presets" id="net-presets"></div>
+          <div class="net-custom">
+            <div class="slider-group"><label>Packet Loss: <span id="pl-val">0%</span></label><input type="range" id="sl-packet-loss" min="0" max="100" value="0" oninput="updateNetSliders()"/></div>
+            <div class="slider-group"><label>Latency: <span id="lat-val">0ms</span></label><input type="range" id="sl-latency" min="0" max="1000" value="0" oninput="updateNetSliders()"/></div>
+            <div class="slider-group"><label>Jitter: <span id="jit-val">0ms</span></label><input type="range" id="sl-jitter" min="0" max="500" value="0" oninput="updateNetSliders()"/></div>
+            <div class="slider-group"><label>Congestion: <span id="cong-val">0%</span></label><input type="range" id="sl-congestion" min="0" max="100" value="0" oninput="updateNetSliders()"/></div>
+            <button class="btn-neon" onclick="applyCustomNetwork()">Apply Custom</button>
+            <button class="btn-neon red" onclick="resetNetwork()">Reset</button>
+          </div>
+          <div class="net-stats" id="net-stats-panel">
+            <div class="dash-stat">Packets: <span id="ns-total">0</span></div>
+            <div class="dash-stat">Dropped: <span id="ns-dropped">0</span></div>
+            <div class="dash-stat">Drop Rate: <span id="ns-drop-rate">0%</span></div>
+            <div class="dash-stat">Avg Delay: <span id="ns-avg-delay">0ms</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLUSTER TAB -->
+      <div class="tab-content" id="tab-cluster">
+        <div class="cluster-panel">
+          <h2 class="panel-title">🌍 Distributed Server Cluster</h2>
+          <div class="lb-controls">
+            <label>Algorithm:</label>
+            <select id="lb-algo" onchange="changeLBAlgo()">
+              <option value="least_connections">Least Connections</option>
+              <option value="round_robin">Round Robin</option>
+              <option value="weighted">Weighted</option>
+              <option value="random">Random</option>
+            </select>
+          </div>
+          <div class="cluster-nodes" id="cluster-nodes"></div>
+          <div class="cluster-stats" id="cluster-stats-panel"></div>
+        </div>
+      </div>
+
+      <!-- WEBRTC TAB -->
+      <div class="tab-content" id="tab-webrtc">
+        <div class="webrtc-panel">
+          <h2 class="panel-title">📞 WebRTC Peer-to-Peer Communication</h2>
+          <div class="webrtc-info">
+            <p>Direct browser-to-browser messaging using WebRTC DataChannels.</p>
+            <p>Signaling via WebSocket → Data via P2P (no server relay).</p>
+          </div>
+          <div class="webrtc-grid">
+            <div class="webrtc-peers-card">
+              <div class="dash-title">Available Peers</div>
+              <div id="webrtc-peer-list" class="peer-list"></div>
+            </div>
+            <div class="webrtc-active-card">
+              <div class="dash-title">Active P2P Connections</div>
+              <div id="webrtc-connections" class="peer-list"></div>
+              <div class="p2p-chat-wrap">
+                <div id="p2p-messages" class="p2p-messages"></div>
+                <div class="p2p-input-bar">
+                  <input type="text" id="p2p-input" placeholder="P2P message (direct, no server)..." autocomplete="off"/>
+                  <button class="btn-neon" onclick="sendP2PMessage()">Send P2P</button>
+                </div>
+              </div>
+            </div>
+            <div class="webrtc-flow-card">
+              <div class="dash-title">WebRTC Signaling Flow</div>
+              <div class="signaling-flow">
+                <div class="flow-step">1. 📡 Caller creates <b>Offer</b> (SDP)</div>
+                <div class="flow-arrow">↓ via WebSocket</div>
+                <div class="flow-step">2. 📡 Server relays <b>Offer</b> to peer</div>
+                <div class="flow-arrow">↓ via WebSocket</div>
+                <div class="flow-step">3. 📡 Peer creates <b>Answer</b> (SDP)</div>
+                <div class="flow-arrow">↓ via WebSocket</div>
+                <div class="flow-step">4. 🔀 ICE Candidates exchanged</div>
+                <div class="flow-arrow">↓ STUN/TURN</div>
+                <div class="flow-step success">5. ✅ <b>P2P DataChannel</b> established!</div>
+                <div class="flow-arrow">↕ Direct Data</div>
+                <div class="flow-step p2p">6. 💬 Messages flow <b>peer-to-peer</b></div>
+              </div>
+            </div>
+          </div>
+          <div id="webrtc-log" class="webrtc-log"></div>
+        </div>
+      </div>
+
+      <!-- GAME TAB -->
+      <div class="tab-content" id="tab-game">
+        <div class="game-panel">
+          <div class="profile-card" id="profile-card"></div>
+          <div class="badges-section" id="badges-section"></div>
+          <div class="leaderboard-section">
+            <h2 class="panel-title">🏆 Leaderboard</h2>
+            <div id="leaderboard-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="connecting-overlay"><div class="connect-spinner"></div><div class="connect-text">ESTABLISHING LINK…</div></div>
+<div id="toast"></div>
+<div id="xp-popup" class="xp-popup"></div>
+<div id="badge-popup" class="badge-popup"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
